@@ -1,11 +1,6 @@
 import os
-from chromadb.config import Settings
 
-# Define the folder for storing database
-PERSIST_DIRECTORY = os.environ.get('PERSIST_DIRECTORY', 'db')
-
-# Define the Chroma settings
-CHROMA_SETTINGS = Settings(
-        persist_directory=PERSIST_DIRECTORY,
-        anonymized_telemetry=False
-)
+PERSIST_DIRECTORY = os.environ.get('PERSIST_DIRECTORY', 'db_processes')
+DOCUMENTS_FOLDER = os.environ.get('DOCUMENTS_FOLDER', 'source_documents')
+EMBEDDINGS_MODEL = os.environ.get('EMBEDDINGS_MODEL', 'nomic-embed-text')
+LLM_MODEL = os.environ.get('MODEL', 'llama3')
