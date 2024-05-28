@@ -59,7 +59,13 @@ def main():
 
 
     while True:
-        query = input("\nEnter a query: ")
+        try:
+            query = input("\nEnter a query: ").encode('utf-8').decode('utf-8')
+        except UnicodeDecodeError as e:
+            print(f"Lỗi giải mã Unicode: {e}")
+        except UnicodeEncodeError as e:
+            print(f"Lỗi mã hóa Unicode: {e}")
+
         if query == "exit":
             break
         if query.strip() == "":

@@ -36,8 +36,6 @@ def process_documents():
         doc = pdf_to_text(pdf_url)
         docs.append(doc)
 
-
-
     index = VectorStoreIndex.from_documents([])
     for doc in docs:
         for page in doc:

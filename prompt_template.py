@@ -11,4 +11,4 @@ LENGTH_PROMPT = {
 
 PURPOSE_PROMPT = 'Purpose: To assist company employees with internal processes, ensuring the provision of accurate, prompt, and professional information.'
 
-RESTRICT_PROMPT = 'Please always use the document provided to answer a question. Do not rely on prior knowledge'
+RESTRICT_PROMPT = 'Please always use the document provided to answer a question. Do not rely on prior knowledge. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct.'
