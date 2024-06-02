@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 
 from llama_index.core import (
     Settings, 
@@ -24,9 +25,12 @@ from constants import (
     PERSIST_DIRECTORY,
 )
 
+from azure_file_storage import AzureFileStorage
+
 def main():
     # Parse the command line arguments
     args = parse_arguments()
+    file_storage = AzureFileStorage()
 
     Settings.llm = Ollama(model=LLM_MODEL, request_timeout=360.0, temperature=0)
     Settings.embed_model = OllamaEmbedding(model_name=EMBEDDINGS_MODEL)
@@ -42,7 +46,6 @@ def main():
 
     response_synthesizer = get_response_synthesizer(
         response_mode="compact", # refine, compact, tree_summarize
-        streaming=True # print response as it is generated
     )
 
 
@@ -58,17 +61,33 @@ def main():
     prior_prompt += RESTRICT_PROMPT + '\n'
 
 
+    conversation_content = []
     while True:
-        query = input("\nEnter a query: ").encode('utf-8').decode('utf-8')
+        query = input("\nEnter a query: ")
 
-        if query == "exit":
+        if query == "/exit":
             break
         if query.strip() == "":
             continue
 
         full_query = query + prior_prompt
         response = query_engine.query(full_query)
-        response.print_response_stream()        
+        print(response.get_response())
+
+        conversation_content.append({
+            'query': query,
+            'response': response.get_response()
+        })
+
+    file_content = ''
+    for i, content in enumerate(conversation_content):
+        file_content += str(i + 1) + '.' + content['query'] + '\n' + content['response'] + '\n\n'
+
+    if (args.save):
+        url = file_storage.upload(file_content, f'conversation-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S.%f")}.txt')
+        print('\n\nThe conversation has been saved to the following URL:')
+        print(url)
+    
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='privateGPT: Ask questions to your documents without an internet connection, '
@@ -87,6 +106,13 @@ def parse_arguments():
         type=str, 
         default='long',
         help="The length of the response to the query. Choose from 'short', 'medium', 'long'.")
+    parser.add_argument(
+        '--save'
+        '-S'
+        type=bool,
+        default=True,
+        help='Save the conversation to a file and upload it to Azure Blob Storage.'
+    )
 
     return parser.parse_args()
 
