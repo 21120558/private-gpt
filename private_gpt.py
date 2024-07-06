@@ -150,7 +150,8 @@ def main():
             index_cls=VectorStoreIndex,
         )
         query_engine = ToolRetrieverRouterQueryEngine(tool_objs_retrieve.as_retriever())
-        print(query_engine.query(full_query))
+        response = query_engine.query(full_query)
+        print(response + '\n' + 'haha')
 
         if (args.save):
             title = objs[0].metadata.name
