@@ -19,6 +19,7 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.core.schema import TextNode
 from llama_index.core.query_engine import ToolRetrieverRouterQueryEngine
 import chromadb
+import ollama
 
 
 from flask import Flask, request, jsonify
@@ -160,18 +161,18 @@ def main():
             url = file_storage.upload(file_name)
             print(f'\n\nReferences: {url}')
 
-@app.route('/generte', methods=['POST'])
+@app.route('/generate', methods=['POST'])
 def handle_query():
-    data = request.ajson
+    data = request.json
     
     if data.get('type') == 'title':
         prompt = data.get('messages', '')
         message = prompt[len(prompt) - 1].get('content', '')
-        response = Ollama.chat(model='llama3', messages=[
+        response = ollama.chat(model='llama3', messages=[
             {
                 'role': 'user',
                 'content': message + '\nResponse in Vietnamese',
-            },
+            }
         ])
 
         return jsonify({
@@ -189,12 +190,16 @@ def handle_query():
         query_engine = ToolRetrieverRouterQueryEngine(tool_objs_retrieve.as_retriever())
 
         full_query = f'Question: {message}\n{prior_prompt}'
-        query_engine.query(full_query)
+        response = query_engine.query(full_query)
 
         title = objs[0].metadata.name
         file_name = next((doc['file_name'] for doc in docs_info if title == doc['title']), None)
-
         url = file_storage.upload(file_name)
+
+        return jsonify({
+            'response': response.response + '\n' + url,
+        })
+        
             
 
 
