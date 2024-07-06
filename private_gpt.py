@@ -1,6 +1,8 @@
 import argparse
 from datetime import datetime
 from typing import Dict, Any, List, Optional
+import nest_asyncio
+nest_asyncio.apply()
 
 from llama_index.core import (
     Settings, 
@@ -69,7 +71,7 @@ def parse_arguments():
 
     return parser.parse_args()
 
-Settings.llm = Ollama(model=LLM_MODEL)
+Settings.llm = Ollama(model=LLM_MODEL, request_timeout=500)
 Settings.embed_model = OllamaEmbedding(model_name=EMBEDDINGS_MODEL)
 client_db = chromadb.PersistentClient(path=PERSIST_DIRECTORY)
 
@@ -194,7 +196,10 @@ def handle_query():
 
         title = objs[0].metadata.name
         file_name = next((doc['file_name'] for doc in docs_info if title == doc['title']), None)
-        url = file_storage.upload(file_name)
+        try:
+            url = file_storage.upload(file_name)
+        except Exception as e:
+            url = ''
 
         return jsonify({
             'response': response.response + '\n' + url,
