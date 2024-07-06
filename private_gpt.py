@@ -22,10 +22,10 @@ import chromadb
 import ollama
 
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-app = Flask(__name__)
-CORS(app)
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# app = Flask(__name__)
+# CORS(app)
 
 from prompt_template import (
     LANGUAGE_PROMPT,
@@ -132,8 +132,6 @@ prior_prompt += RESTRICT_PROMPT + '\n'
 
        
 def main():
-
-
     while True:
         print('\n\n')
         print('=' * 50)
@@ -161,48 +159,51 @@ def main():
             url = file_storage.upload(file_name)
             print(f'\n\nReferences: {url}')
 
-@app.route('/generate', methods=['POST'])
-def handle_query():
-    data = request.json
+# @app.route('/generate', methods=['POST'])
+# def handle_query():
+#     data = request.json
     
-    if data.get('type') == 'title':
-        prompt = data.get('messages', '')
-        message = prompt[len(prompt) - 1].get('content', '')
-        response = ollama.chat(model='llama3', messages=[
-            {
-                'role': 'user',
-                'content': message + '\nResponse in Vietnamese',
-            }
-        ])
+#     if data.get('type') == 'title':
+#         prompt = data.get('messages', '')
+#         message = prompt[len(prompt) - 1].get('content', '')
+#         response = ollama.chat(model='llama3', messages=[
+#             {
+#                 'role': 'user',
+#                 'content': message + '\nResponse in Vietnamese',
+#             }
+#         ])
 
-        return jsonify({
-            'response': response['message']['content']
-        })
-    else:
-        prompt = data.get('messages', '')
-        message = prompt[len(prompt) - 1].get('content')
+#         return jsonify({
+#             'response': response['message']['content']
+#         })
+#     else:
+#         prompt = data.get('messages', '')
+#         message = prompt[len(prompt) - 1].get('content')
+#         print(message)
 
-        objs = object_retriever.retrieve(message)
-        tool_objs_retrieve = ObjectIndex.from_objects(
-            objs,
-            index_cls=VectorStoreIndex,
-        )
-        query_engine = ToolRetrieverRouterQueryEngine(tool_objs_retrieve.as_retriever())
+#         objs = object_retriever.retrieve(message)
+#         tool_objs_retrieve = ObjectIndex.from_objects(
+#             objs,
+#             index_cls=VectorStoreIndex,
+#         )
+#         query_engine = ToolRetrieverRouterQueryEngine(tool_objs_retrieve.as_retriever())
 
-        full_query = f'Question: {message}\n{prior_prompt}'
-        response = query_engine.query(full_query)
+#         full_query = f'Question: {message}\n{prior_prompt}'
+#         response = query_engine.query(full_query)
 
-        title = objs[0].metadata.name
-        file_name = next((doc['file_name'] for doc in docs_info if title == doc['title']), None)
-        url = file_storage.upload(file_name)
+#         title = objs[0].metadata.name
+#         file_name = next((doc['file_name'] for doc in docs_info if title == doc['title']), None)
+#         url = file_storage.upload(file_name)
 
-        return jsonify({
-            'response': response.response + '\n' + url,
-        })
+#         print(response)
+
+#         return jsonify({
+#             'response': response.response + '\n' + url,
+#         })
         
             
 
 
 if __name__ == "__main__":
-    # main()
-    app.run(debug=True)
+    main()
+    # app.run(debug=True)
