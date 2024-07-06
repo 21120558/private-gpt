@@ -160,14 +160,14 @@ def main():
             url = file_storage.upload(file_name)
             print(f'\n\nReferences: {url}')
 
-@app.route('/generate', methods=['POST'])
+@app.route('/generte', methods=['POST'])
 def handle_query():
-    data = request.json
+    data = request.ajson
     
     if data.get('type') == 'title':
         prompt = data.get('messages', '')
         message = prompt[len(prompt) - 1].get('content', '')
-        response = ollama.chat(model='llama3', messages=[
+        response = Ollama.chat(model='llama3', messages=[
             {
                 'role': 'user',
                 'content': message + '\nResponse in Vietnamese',
@@ -196,9 +196,6 @@ def handle_query():
 
         url = file_storage.upload(file_name)
             
-    
-
-
 
 
 if __name__ == "__main__":
