@@ -151,7 +151,7 @@ def main():
         )
         query_engine = ToolRetrieverRouterQueryEngine(tool_objs_retrieve.as_retriever())
         response = query_engine.query(full_query)
-        print(response + '\n' + 'haha')
+        print(response.response + '\n' + 'haha')
 
         if (args.save):
             title = objs[0].metadata.name
