@@ -199,6 +199,7 @@ def handle_query():
         try:
             url = file_storage.upload(file_name)
         except Exception as e:
+            print(e)
             url = ''
 
         return jsonify({
