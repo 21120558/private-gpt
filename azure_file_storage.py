@@ -26,3 +26,7 @@ class AzureFileStorage:
         self.blob_client.upload_blob(file_stream, overwrite=True)
 
         return f'https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{file_name}'
+
+if __name__ == '__main__':
+    file_storage = AzureFileStorage()
+    file_storage.upload('Quy_Trinh_Dao_Tao_ACB.pdf')
