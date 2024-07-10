@@ -125,17 +125,15 @@ object_index = ObjectIndex.from_objects(
     to_node_fn=to_node_fn,
 )
 object_retriever = object_index.as_retriever(similarity_top_k=1)
-args = parse_arguments()
+# args = parse_arguments()
 prior_prompt = "" 
-prior_prompt += LANGUAGE_PROMPT[args.lang] + '\n'
-prior_prompt += LENGTH_PROMPT[args.length_response] + '\n'
+prior_prompt += LANGUAGE_PROMPT['vi'] + '\n'
+prior_prompt += LENGTH_PROMPT['medium'] + '\n'
 prior_prompt += PURPOSE_PROMPT + '\n'
 prior_prompt += RESTRICT_PROMPT + '\n'
 
        
 def main():
-
-
     while True:
         print('\n\n')
         print('=' * 50)
